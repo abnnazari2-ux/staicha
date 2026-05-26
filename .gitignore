@@ -1,0 +1,46 @@
+# dependencies
+node_modules
+.pnp
+.pnp.js
+.yarn/
+
+# next
+.next/
+out/
+build/
+dist/
+
+# environment
+.env
+.env.local
+.env.development.local
+.env.production.local
+
+# misc
+.DS_Store
+*.pem
+.vscode/
+.idea/
+
+# debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# typescript
+*.tsbuildinfo
+next-env.d.ts
+
+# vercel
+.vercel
+
+# Runtime CMS overrides — these are written by the admin UI on hosts with a
+# writable filesystem. The typed source files in src/content/ remain the
+# source of truth.
+content-overrides/
+
+# Form submissions persisted to disk by the mailer fallback.
+submissions/
+
+# Cached font binaries for the OG image generator.
+.cache/
