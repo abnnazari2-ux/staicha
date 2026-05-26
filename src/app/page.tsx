@@ -5,16 +5,24 @@ import NumbersSection from "@/components/homepage/NumbersSection";
 import TestimonialsSection from "@/components/homepage/TestimonialsSection";
 import InsightsPreview from "@/components/homepage/InsightsPreview";
 import CTASection from "@/components/homepage/CTASection";
+import { readCollection } from "@/lib/cms";
 
-export default function HomePage() {
+export const revalidate = 60;
+
+export default async function HomePage() {
+  const [services, testimonials, insights] = await Promise.all([
+    readCollection("services"),
+    readCollection("testimonials"),
+    readCollection("insights"),
+  ]);
   return (
     <>
       <HeroSection />
       <PositioningSection />
-      <ServicesShowcase />
+      <ServicesShowcase services={services} />
       <NumbersSection />
-      <TestimonialsSection />
-      <InsightsPreview />
+      <TestimonialsSection testimonials={testimonials} />
+      <InsightsPreview posts={insights.slice(0, 3)} />
       <CTASection />
     </>
   );

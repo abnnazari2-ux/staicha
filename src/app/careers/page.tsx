@@ -1,9 +1,11 @@
 import type { Metadata } from "next";
 import SectionReveal from "@/components/ui/SectionReveal";
 import MagneticButton from "@/components/ui/MagneticButton";
-import { positions } from "@/content/careers";
+import { readCollection } from "@/lib/cms";
 import { site } from "@/content/site";
 import { JsonLd, breadcrumbsLd } from "@/lib/jsonLd";
+
+export const revalidate = 60;
 
 export const metadata: Metadata = {
   title: "Careers",
@@ -47,7 +49,8 @@ const whyBenefits = [
   { title: "Meaningful work, early", detail: "Discrete ownership from your first month. No multi-year apprenticeships to substantive work." },
 ];
 
-export default function CareersPage() {
+export default async function CareersPage() {
+  const positions = await readCollection("careers");
   return (
     <>
       <section className="bg-ink text-bone pt-s10 pb-s9 min-h-[65vh] flex items-end" data-theme="dark">

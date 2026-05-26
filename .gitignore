@@ -38,3 +38,9 @@ next-env.d.ts
 # writable filesystem. The typed source files in src/content/ remain the
 # source of truth.
 content-overrides/
+
+# Form submissions persisted to disk by the mailer fallback.
+submissions/
+
+# Cached font binaries for the OG image generator.
+.cache/

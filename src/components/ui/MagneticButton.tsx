@@ -36,11 +36,17 @@ export default function MagneticButton({
       const cy = r.top + r.height / 2;
       const dx = e.clientX - cx;
       const dy = e.clientY - cy;
-      const dist = Math.hypot(dx, dy);
-      const radius = 100;
-      if (dist < radius) {
-        tx = dx * 0.25;
-        ty = dy * 0.25;
+      // Only react inside the element's bounds + a small skirt.
+      const inside =
+        e.clientX >= r.left - 24 &&
+        e.clientX <= r.right + 24 &&
+        e.clientY >= r.top - 24 &&
+        e.clientY <= r.bottom + 24;
+      if (inside) {
+        // Cap displacement at 15px on each axis, per brand spec.
+        const max = 15;
+        tx = Math.max(-max, Math.min(max, dx * 0.18));
+        ty = Math.max(-max, Math.min(max, dy * 0.18));
       } else {
         tx = 0;
         ty = 0;

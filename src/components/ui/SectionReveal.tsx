@@ -1,8 +1,13 @@
 "use client";
 
 import { motion, useReducedMotion } from "framer-motion";
-import { useEffect, useState } from "react";
 
+/**
+ * Renders children inside a motion.div with a fade-up reveal on first
+ * intersection. The `data-reveal` attribute is targeted by a <noscript>
+ * style in the root layout that forces opacity 1 / transform none when
+ * JavaScript is disabled, so the content is never silently invisible.
+ */
 export default function SectionReveal({
   children,
   delay = 0,
@@ -15,20 +20,14 @@ export default function SectionReveal({
   y?: number;
 }) {
   const reduce = useReducedMotion();
-  // Mount-gated initial: when JS is disabled the component never mounts and the
-  // server-rendered content is left untouched at full opacity. Once mounted we
-  // switch to the animation initial state to enable the reveal.
-  const [mounted, setMounted] = useState(false);
-  useEffect(() => {
-    setMounted(true);
-  }, []);
 
-  if (reduce || !mounted) {
+  if (reduce) {
     return <div className={className}>{children}</div>;
   }
 
   return (
     <motion.div
+      data-reveal
       className={className}
       initial={{ opacity: 0, y }}
       whileInView={{ opacity: 1, y: 0 }}

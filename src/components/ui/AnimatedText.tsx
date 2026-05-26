@@ -25,10 +25,9 @@ export default function AnimatedText({
   if (reduce) {
     return (
       <Tag className={className}>
-        {children.split("\n").map((line, i, arr) => (
+        {children.split("\n").map((line, i) => (
           <span key={i} className="block">
             {line}
-            {i < arr.length - 1 ? null : null}
           </span>
         ))}
       </Tag>

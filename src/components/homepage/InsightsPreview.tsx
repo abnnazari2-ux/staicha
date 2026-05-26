@@ -1,11 +1,11 @@
 import Link from "next/link";
 import Image from "next/image";
 import SectionReveal from "@/components/ui/SectionReveal";
-import { insights } from "@/content/insights";
+import type { Insight } from "@/content/insights";
 
 const offsets = ["md:mt-0", "md:mt-s8", "md:mt-s5"];
 
-export default function InsightsPreview() {
+export default function InsightsPreview({ posts }: { posts: Insight[] }) {
   return (
     <section className="bg-paper py-s10">
       <div className="max-w-content mx-auto px-s5 md:px-s7">
@@ -25,13 +25,13 @@ export default function InsightsPreview() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-s6">
-          {insights.slice(0, 3).map((post, i) => (
+          {posts.map((post, i) => (
             <SectionReveal key={post.slug} delay={i * 0.1} className={offsets[i] || ""}>
               <Link href={`/insights/${post.slug}`} className="group block">
                 <div className="relative aspect-[4/5] overflow-hidden bg-bone-2 mb-s5">
                   <Image
                     src={post.image}
-                    alt=""
+                    alt={`Illustration for ${post.title}`}
                     fill
                     sizes="(max-width: 768px) 100vw, 33vw"
                     className="object-cover transition-transform duration-700 group-hover:scale-[1.04]"

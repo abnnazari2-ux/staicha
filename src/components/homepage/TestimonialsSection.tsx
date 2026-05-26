@@ -2,9 +2,9 @@
 
 import { useEffect, useRef, useState } from "react";
 import { motion, useScroll, useTransform, useReducedMotion, MotionValue } from "framer-motion";
-import { testimonials } from "@/content/testimonials";
+import type { Testimonial } from "@/content/testimonials";
 
-export default function TestimonialsSection() {
+export default function TestimonialsSection({ testimonials }: { testimonials: Testimonial[] }) {
   const [isMobile, setIsMobile] = useState(false);
   const reduce = useReducedMotion();
 
@@ -16,15 +16,15 @@ export default function TestimonialsSection() {
     return () => mq.removeEventListener("change", update);
   }, []);
 
-  if (isMobile || reduce) return <MobileCarousel />;
-  return <DesktopStack />;
+  if (isMobile || reduce) return <MobileCarousel testimonials={testimonials} />;
+  return <DesktopStack testimonials={testimonials} />;
 }
 
 function Header() {
   return (
     <div className="mb-s8">
       <p className="font-mono text-[11px] tracking-mono-up uppercase text-oxblood">
-        <span className="inline-block w-[6px] h-[6px] rounded-full bg-oxblood align-middle mr-s2" />
+        <span aria-hidden className="inline-block w-[6px] h-[6px] rounded-full bg-oxblood align-middle mr-s2" />
         In their words
       </p>
       <h2 className="mt-s3 font-serif font-light leading-[1.05] tracking-display text-[clamp(32px,4.5vw,56px)] text-ink max-w-[20ch]">
@@ -34,7 +34,7 @@ function Header() {
   );
 }
 
-function MobileCarousel() {
+function MobileCarousel({ testimonials }: { testimonials: Testimonial[] }) {
   const trackRef = useRef<HTMLDivElement>(null);
   const [active, setActive] = useState(0);
 
@@ -42,7 +42,10 @@ function MobileCarousel() {
     const t = trackRef.current;
     if (!t) return;
     const card = t.children[i] as HTMLElement | undefined;
-    if (card) t.scrollTo({ left: card.offsetLeft - 16, behavior: "smooth" });
+    if (!card) return;
+    // Measure actual horizontal padding rather than hard-coding an offset.
+    const padding = parseFloat(getComputedStyle(t).paddingLeft) || 0;
+    t.scrollTo({ left: card.offsetLeft - padding, behavior: "smooth" });
   };
 
   useEffect(() => {
@@ -59,17 +62,23 @@ function MobileCarousel() {
           const el = c as HTMLElement;
           const mid = el.offsetLeft + el.offsetWidth / 2;
           const d = Math.abs(mid - center);
-          if (d < bestDist) { bestDist = d; best = i; }
+          if (d < bestDist) {
+            bestDist = d;
+            best = i;
+          }
         });
         setActive(best);
       });
     };
     t.addEventListener("scroll", onScroll, { passive: true });
-    return () => { t.removeEventListener("scroll", onScroll); cancelAnimationFrame(raf); };
+    return () => {
+      t.removeEventListener("scroll", onScroll);
+      cancelAnimationFrame(raf);
+    };
   }, []);
 
   return (
-    <section className="bg-bone py-s9" aria-label="Client testimonials">
+    <section className="bg-bone py-s9" aria-roledescription="carousel" aria-label="Client testimonials">
       <div className="max-w-content mx-auto px-s5">
         <Header />
         <div
@@ -79,33 +88,44 @@ function MobileCarousel() {
           {testimonials.map((t, i) => (
             <article
               key={i}
+              aria-roledescription="slide"
+              aria-label={`${i + 1} of ${testimonials.length}`}
               className="snap-center shrink-0 w-[88vw] bg-paper border-t-2 border-oxblood p-s6 shadow-[0_24px_60px_rgba(15,20,23,0.06)]"
             >
-              <span aria-hidden className="block font-serif text-oxblood text-[64px] leading-none opacity-10 select-none -mb-s4">“</span>
+              <span aria-hidden className="block font-serif text-oxblood text-[64px] leading-none opacity-10 select-none -mb-s4">
+                “
+              </span>
               <blockquote className="font-serif italic text-[18px] leading-[1.5] text-ink">
                 “{t.quote}”
               </blockquote>
               <footer className="mt-s5 pt-s4 border-t border-silver/40">
                 <p className="font-sans text-[14px] text-ink">{t.name}</p>
-                <p className="font-sans text-[13px] text-graphite">{t.title}, {t.company}</p>
+                <p className="font-sans text-[13px] text-graphite">
+                  {t.title}, {t.company}
+                </p>
               </footer>
             </article>
           ))}
         </div>
-        <div className="flex justify-center gap-s2 mt-s5" role="tablist" aria-label="Testimonial pagination">
+        {/* Pagination — wraps a 6px visible dot inside a 32×32 touch target. */}
+        <div className="flex justify-center gap-s1 mt-s5">
           {testimonials.map((_, i) => (
             <button
               key={i}
               type="button"
-              role="tab"
-              aria-selected={i === active}
-              aria-label={`Show testimonial ${i + 1}`}
+              aria-label={`Show testimonial ${i + 1} of ${testimonials.length}`}
+              aria-pressed={i === active}
               onClick={() => scrollTo(i)}
-              className={[
-                "h-[6px] rounded-full transition-all",
-                i === active ? "w-[28px] bg-oxblood" : "w-[6px] bg-silver",
-              ].join(" ")}
-            />
+              className="w-[32px] h-[32px] inline-flex items-center justify-center group"
+            >
+              <span
+                aria-hidden
+                className={[
+                  "block h-[6px] rounded-full transition-all",
+                  i === active ? "w-[28px] bg-oxblood" : "w-[8px] bg-silver group-hover:bg-graphite",
+                ].join(" ")}
+              />
+            </button>
           ))}
         </div>
       </div>
@@ -113,7 +133,7 @@ function MobileCarousel() {
   );
 }
 
-function DesktopStack() {
+function DesktopStack({ testimonials }: { testimonials: Testimonial[] }) {
   const ref = useRef<HTMLElement>(null);
   const { scrollYProgress } = useScroll({
     target: ref,
@@ -142,10 +162,21 @@ function DesktopStack() {
 }
 
 function Card({
-  index, total, progress, quote, name, title, company,
+  index,
+  total,
+  progress,
+  quote,
+  name,
+  title,
+  company,
 }: {
-  index: number; total: number; progress: MotionValue<number>;
-  quote: string; name: string; title: string; company: string;
+  index: number;
+  total: number;
+  progress: MotionValue<number>;
+  quote: string;
+  name: string;
+  title: string;
+  company: string;
 }) {
   const step = 1 / total;
   const start = index * step;
@@ -175,7 +206,9 @@ function Card({
       <footer className="flex items-end justify-between mt-s6 pt-s5 border-t border-silver/40">
         <div>
           <p className="font-sans text-[14px] text-ink">{name}</p>
-          <p className="font-sans text-[13px] text-graphite">{title}, {company}</p>
+          <p className="font-sans text-[13px] text-graphite">
+            {title}, {company}
+          </p>
         </div>
         <p className="font-mono text-[10px] tracking-mono-up uppercase text-pewter">
           {String(index + 1).padStart(2, "0")} / {String(total).padStart(2, "0")}

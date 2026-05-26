@@ -20,15 +20,22 @@ export default function CollectionEditor({ collection, title, file, initialData 
   const [text, setText] = useState(() => JSON.stringify(initialData, null, 2));
   const [status, setStatus] = useState<Status>({ kind: "idle" });
   const [valid, setValid] = useState(true);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     // Fetch override (if any) so the editor reflects what's actually live.
+    // Block edits until the fetch resolves so we don't overwrite the user.
+    let cancelled = false;
+    setLoading(true);
     fetch(`/api/admin/${collection}`)
       .then((r) => r.json())
       .then((res) => {
+        if (cancelled) return;
         if (res.ok && res.data) setText(JSON.stringify(res.data, null, 2));
       })
-      .catch(() => {});
+      .catch(() => {})
+      .finally(() => { if (!cancelled) setLoading(false); });
+    return () => { cancelled = true; };
   }, [collection]);
 
   useEffect(() => {
@@ -87,7 +94,9 @@ export default function CollectionEditor({ collection, title, file, initialData 
         value={text}
         onChange={(e) => setText(e.target.value)}
         spellCheck={false}
-        className="w-full h-[60vh] bg-ink-2 border border-bone/15 p-s4 font-mono text-[12px] leading-[1.6] text-bone resize-y focus:outline-none focus:border-oxblood-tint"
+        disabled={loading}
+        aria-busy={loading}
+        className="w-full h-[60vh] bg-ink-2 border border-bone/15 p-s4 font-mono text-[12px] leading-[1.6] text-bone resize-y focus:outline-none focus:border-oxblood-tint disabled:opacity-60"
       />
 
       <div className="mt-s4 min-h-[40px]">

@@ -26,18 +26,21 @@ export default function InsightsGrid({ posts }: { posts: Insight[] }) {
 
   return (
     <>
-      <div className="flex flex-wrap gap-s3 mb-s8 font-mono text-[10px] tracking-mono-up uppercase" role="tablist" aria-label="Filter by category">
+      <div
+        className="flex flex-wrap gap-s3 mb-s8 font-mono text-[10px] tracking-mono-up uppercase"
+        role="toolbar"
+        aria-label="Filter insights by category"
+      >
         {visibleCategories.map((c) => {
           const isActive = active === c;
           return (
             <button
               key={c}
-              role="tab"
-              aria-selected={isActive}
               type="button"
+              aria-pressed={isActive}
               onClick={() => setActive(c)}
               className={[
-                "px-s4 py-s2 border transition-colors",
+                "min-h-[40px] inline-flex items-center px-s4 border transition-colors",
                 isActive
                   ? "border-ink bg-ink text-bone"
                   : "border-silver/60 text-graphite hover:border-ink hover:text-ink",
@@ -49,7 +52,11 @@ export default function InsightsGrid({ posts }: { posts: Insight[] }) {
         })}
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-s7 min-h-[40vh]">
+      <div
+        className="grid grid-cols-1 md:grid-cols-3 gap-s7 min-h-[40vh]"
+        aria-live="polite"
+        aria-atomic="false"
+      >
         <AnimatePresence mode="popLayout">
           {filtered.map((post, i) => (
             <motion.div
@@ -65,7 +72,7 @@ export default function InsightsGrid({ posts }: { posts: Insight[] }) {
                 <div className="relative aspect-[4/5] overflow-hidden bg-bone-2 mb-s5">
                   <Image
                     src={post.image}
-                    alt=""
+                    alt={`Illustration for ${post.title}`}
                     fill
                     sizes="(max-width: 768px) 100vw, 33vw"
                     className="object-cover transition-transform duration-700 group-hover:scale-[1.04]"
@@ -73,7 +80,7 @@ export default function InsightsGrid({ posts }: { posts: Insight[] }) {
                   <div className="absolute inset-0 bg-bone opacity-[0.05] group-hover:opacity-0 transition-opacity duration-500" />
                 </div>
                 <p className="font-mono text-[10px] tracking-mono-up uppercase text-pewter mb-s3">
-                  <span className="inline-block w-[5px] h-[5px] rounded-full bg-oxblood align-middle mr-s2" />
+                  <span aria-hidden className="inline-block w-[5px] h-[5px] rounded-full bg-oxblood align-middle mr-s2" />
                   {post.category}
                 </p>
                 <h2 className="font-serif text-[22px] leading-[1.25] text-ink group-hover:text-oxblood transition-colors mb-s3">
@@ -83,7 +90,12 @@ export default function InsightsGrid({ posts }: { posts: Insight[] }) {
                   {post.excerpt}
                 </p>
                 <p className="font-mono text-[10px] tracking-mono-up uppercase text-pewter">
-                  {new Date(post.date).toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" })} · {post.author}
+                  {new Date(post.date).toLocaleDateString("en-GB", {
+                    day: "numeric",
+                    month: "long",
+                    year: "numeric",
+                  })}{" "}
+                  · {post.author}
                 </p>
               </Link>
             </motion.div>
@@ -92,9 +104,7 @@ export default function InsightsGrid({ posts }: { posts: Insight[] }) {
       </div>
 
       {filtered.length === 0 && (
-        <p className="font-sans text-[14px] text-graphite mt-s5">
-          No articles in this category yet.
-        </p>
+        <p className="font-sans text-[14px] text-graphite mt-s5">No articles in this category yet.</p>
       )}
     </>
   );

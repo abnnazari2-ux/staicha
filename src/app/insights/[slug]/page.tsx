@@ -3,15 +3,18 @@ import Link from "next/link";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 import SectionReveal from "@/components/ui/SectionReveal";
-import { insights } from "@/content/insights";
-import { team } from "@/content/team";
+import { insights as defaultInsights } from "@/content/insights";
+import { readCollection } from "@/lib/cms";
 import { JsonLd, articleLd, breadcrumbsLd } from "@/lib/jsonLd";
 
+export const revalidate = 60;
+
 export function generateStaticParams() {
-  return insights.map((i) => ({ slug: i.slug }));
+  return defaultInsights.map((i) => ({ slug: i.slug }));
 }
 
-export function generateMetadata({ params }: { params: { slug: string } }): Metadata {
+export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
+  const insights = await readCollection("insights");
   const p = insights.find((x) => x.slug === params.slug);
   if (!p) return {};
   return {
@@ -29,7 +32,11 @@ export function generateMetadata({ params }: { params: { slug: string } }): Meta
   };
 }
 
-export default function InsightArticle({ params }: { params: { slug: string } }) {
+export default async function InsightArticle({ params }: { params: { slug: string } }) {
+  const [insights, team] = await Promise.all([
+    readCollection("insights"),
+    readCollection("team"),
+  ]);
   const post = insights.find((p) => p.slug === params.slug);
   if (!post) notFound();
   const author = team.find((t) => post.author.includes(t.name.split(" ")[0]));
@@ -61,7 +68,7 @@ export default function InsightArticle({ params }: { params: { slug: string } })
           <div className="relative aspect-[16/8] max-w-content mx-auto">
             <Image
               src={post.image}
-              alt=""
+              alt={`Illustration for ${post.title}`}
               fill
               sizes="100vw"
               className="object-cover"

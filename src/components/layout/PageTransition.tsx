@@ -17,7 +17,7 @@ export default function PageTransition({ children }: { children: React.ReactNode
     }
     if (reduce) return;
     setWipeKey(pathname);
-    const t = window.setTimeout(() => setWipeKey(null), 700);
+    const t = window.setTimeout(() => setWipeKey(null), 450);
     return () => clearTimeout(t);
   }, [pathname, reduce]);
 
@@ -29,7 +29,7 @@ export default function PageTransition({ children }: { children: React.ReactNode
           initial={reduce ? { opacity: 0 } : { opacity: 0, y: 6 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0 }}
-          transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+          transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
         >
           {children}
         </motion.div>
@@ -43,10 +43,10 @@ export default function PageTransition({ children }: { children: React.ReactNode
             initial={{ x: "-100%" }}
             animate={{ x: "100%" }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.7, ease: [0.7, 0, 0.3, 1] }}
+            transition={{ duration: 0.45, ease: [0.7, 0, 0.3, 1] }}
             className="fixed inset-0 z-[150] bg-ink pointer-events-none flex items-center justify-center"
           >
-            <span className="block w-3 h-3 rounded-full bg-oxblood-tint" />
+            <span aria-hidden className="block w-3 h-3 rounded-full bg-oxblood-tint" />
           </motion.div>
         )}
       </AnimatePresence>

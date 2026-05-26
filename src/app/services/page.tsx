@@ -1,8 +1,10 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import SectionReveal from "@/components/ui/SectionReveal";
-import { services } from "@/content/services";
+import { readCollection } from "@/lib/cms";
 import { JsonLd, breadcrumbsLd, serviceLd } from "@/lib/jsonLd";
+
+export const revalidate = 60;
 
 export const metadata: Metadata = {
   title: "Services",
@@ -11,7 +13,8 @@ export const metadata: Metadata = {
   alternates: { canonical: "/services" },
 };
 
-export default function ServicesPage() {
+export default async function ServicesPage() {
+  const services = await readCollection("services");
   return (
     <>
       <section className="bg-ink text-bone pt-s10 pb-s9 min-h-[60vh] flex items-end" data-theme="dark">
@@ -47,7 +50,7 @@ export default function ServicesPage() {
                   <p className="col-span-12 md:col-span-5 font-sans text-[15px] leading-[1.65] text-graphite">
                     {s.short}
                   </p>
-                  <span className="hidden md:block col-span-1 text-right text-oxblood font-sans text-[18px] transition-transform group-hover:translate-x-1">
+                  <span aria-hidden className="hidden md:block col-span-1 text-right text-oxblood font-sans text-[18px] transition-transform group-hover:translate-x-1">
                     →
                   </span>
                 </Link>

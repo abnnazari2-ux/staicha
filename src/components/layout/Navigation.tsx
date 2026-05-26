@@ -39,30 +39,38 @@ export default function Navigation() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  // Theme detection: if the section under the nav has data-theme="dark", render the reversed logo + bone links.
+  // Theme detection: walk through declared [data-theme] sections and mark
+  // the nav dark whenever a dark section overlaps the navbar's vertical band.
+  // Uses IntersectionObserver so we only react when section boundaries cross
+  // the band, not on every scroll frame.
   useEffect(() => {
     const navHeight = 72;
-    const probe = () => {
-      const el = document.elementFromPoint(window.innerWidth / 2, navHeight / 2);
-      if (!el) return;
-      const section = el.closest<HTMLElement>("[data-theme]");
-      // Fall back to the path-based heuristic when nothing under the nav declares a theme.
-      if (section) setDark(section.dataset.theme === "dark");
-      else setDark(pathStartsDark(pathname));
-    };
-    probe();
-    let raf = 0;
-    const onScroll = () => {
-      cancelAnimationFrame(raf);
-      raf = requestAnimationFrame(probe);
-    };
-    window.addEventListener("scroll", onScroll, { passive: true });
-    window.addEventListener("resize", onScroll, { passive: true });
-    return () => {
-      window.removeEventListener("scroll", onScroll);
-      window.removeEventListener("resize", onScroll);
-      cancelAnimationFrame(raf);
-    };
+    // Sentinel band: 1px-tall strip centred on the nav.
+    const sections = Array.from(document.querySelectorAll<HTMLElement>("[data-theme]"));
+    if (sections.length === 0) {
+      setDark(pathStartsDark(pathname));
+      return;
+    }
+    const observer = new IntersectionObserver(
+      () => {
+        // Determine which section overlaps the band right now.
+        for (const s of sections) {
+          const rect = s.getBoundingClientRect();
+          if (rect.top <= navHeight / 2 && rect.bottom >= navHeight / 2) {
+            setDark(s.dataset.theme === "dark");
+            return;
+          }
+        }
+        // No section overlaps: fall back to heuristic.
+        setDark(pathStartsDark(pathname));
+      },
+      {
+        // Trigger only when the band crosses a section boundary.
+        rootMargin: `-${navHeight / 2}px 0px -${window.innerHeight - navHeight / 2 - 1}px 0px`,
+      }
+    );
+    sections.forEach((s) => observer.observe(s));
+    return () => observer.disconnect();
   }, [pathname]);
 
   useEffect(() => {

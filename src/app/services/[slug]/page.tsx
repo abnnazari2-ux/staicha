@@ -3,14 +3,18 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import SectionReveal from "@/components/ui/SectionReveal";
 import MagneticButton from "@/components/ui/MagneticButton";
-import { services } from "@/content/services";
+import { services as defaultServices } from "@/content/services";
+import { readCollection } from "@/lib/cms";
 import { JsonLd, breadcrumbsLd, serviceLd } from "@/lib/jsonLd";
 
+export const revalidate = 60;
+
 export function generateStaticParams() {
-  return services.map((s) => ({ slug: s.slug }));
+  return defaultServices.map((s) => ({ slug: s.slug }));
 }
 
-export function generateMetadata({ params }: { params: { slug: string } }): Metadata {
+export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
+  const services = await readCollection("services");
   const s = services.find((x) => x.slug === params.slug);
   if (!s) return {};
   return {
@@ -20,7 +24,8 @@ export function generateMetadata({ params }: { params: { slug: string } }): Meta
   };
 }
 
-export default function ServicePage({ params }: { params: { slug: string } }) {
+export default async function ServicePage({ params }: { params: { slug: string } }) {
+  const services = await readCollection("services");
   const service = services.find((s) => s.slug === params.slug);
   if (!service) notFound();
 
@@ -60,7 +65,7 @@ export default function ServicePage({ params }: { params: { slug: string } }) {
               <ul className="space-y-s3">
                 {service.forWhom.map((w) => (
                   <li key={w} className="flex gap-s3 font-sans text-[14px] leading-[1.55] text-graphite">
-                    <span className="mt-[8px] block w-[5px] h-[5px] rounded-full bg-oxblood shrink-0" />
+                    <span aria-hidden className="mt-[8px] block w-[5px] h-[5px] rounded-full bg-oxblood shrink-0" />
                     {w}
                   </li>
                 ))}

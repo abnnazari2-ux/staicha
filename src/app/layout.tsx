@@ -9,6 +9,7 @@ import PageTransition from "@/components/layout/PageTransition";
 import PageLoadSequence from "@/components/layout/PageLoadSequence";
 import { site } from "@/content/site";
 import { JsonLd, organizationLd } from "@/lib/jsonLd";
+import { readCollection } from "@/lib/cms";
 
 const serif = Source_Serif_4({
   subsets: ["latin"],
@@ -79,10 +80,21 @@ export const metadata: Metadata = {
   alternates: { canonical: "/" },
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  const services = await readCollection("services");
+  const footerServices = services.slice(0, 8).map((s) => ({ slug: s.slug, title: s.title }));
   return (
     <html lang="en-GB" className={`${serif.variable} ${sans.variable} ${mono.variable}`}>
       <body className="bg-bone text-ink">
+        <noscript>
+          <style>{`
+            [data-reveal],
+            [data-reveal] * {
+              opacity: 1 !important;
+              transform: none !important;
+            }
+          `}</style>
+        </noscript>
         <a href="#main" className="skip-link">Skip to content</a>
         <SmoothScroll />
         <CustomCursor />
@@ -91,7 +103,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <PageTransition>
           <main id="main" className="min-h-screen">{children}</main>
         </PageTransition>
-        <Footer />
+        <Footer services={footerServices} />
         <JsonLd data={organizationLd} />
       </body>
     </html>

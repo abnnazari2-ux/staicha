@@ -1,8 +1,10 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import SectionReveal from "@/components/ui/SectionReveal";
-import { team } from "@/content/team";
+import { readCollection } from "@/lib/cms";
 import { JsonLd, personLd, breadcrumbsLd } from "@/lib/jsonLd";
+
+export const revalidate = 60;
 
 export const metadata: Metadata = {
   title: "Team",
@@ -10,7 +12,8 @@ export const metadata: Metadata = {
   alternates: { canonical: "/team" },
 };
 
-export default function TeamPage() {
+export default async function TeamPage() {
+  const team = await readCollection("team");
   return (
     <>
       <section className="bg-ink text-bone pt-s10 pb-s9 min-h-[60vh] flex items-end" data-theme="dark">

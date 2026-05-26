@@ -3,10 +3,11 @@
 import Link from "next/link";
 import Image from "next/image";
 import { useState } from "react";
-import { services } from "@/content/services";
 import { site } from "@/content/site";
 
-export default function Footer() {
+type FooterService = { slug: string; title: string };
+
+export default function Footer({ services }: { services: FooterService[] }) {
   const [email, setEmail] = useState("");
   const [status, setStatus] = useState<"idle" | "ok" | "error">("idle");
 
@@ -43,7 +44,7 @@ export default function Footer() {
           <div>
             <h3 className="font-mono text-[11px] tracking-mono-up uppercase text-silver mb-s4">Services</h3>
             <ul className="space-y-s2">
-              {services.slice(0, 8).map((s) => (
+              {services.map((s) => (
                 <li key={s.slug}>
                   <Link href={`/services/${s.slug}`} className="font-sans text-[14px] text-bone/80 hover:text-oxblood-tint transition-colors">
                     {s.title}

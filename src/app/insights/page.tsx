@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import InsightsGrid from "@/components/shared/InsightsGrid";
-import { insights } from "@/content/insights";
+import { readCollection } from "@/lib/cms";
 import { JsonLd, breadcrumbsLd } from "@/lib/jsonLd";
+
+export const revalidate = 60;
 
 export const metadata: Metadata = {
   title: "Insights",
@@ -10,7 +12,8 @@ export const metadata: Metadata = {
   alternates: { canonical: "/insights" },
 };
 
-export default function InsightsPage() {
+export default async function InsightsPage() {
+  const insights = await readCollection("insights");
   return (
     <>
       <section className="bg-ink text-bone pt-s10 pb-s9 min-h-[55vh] flex items-end" data-theme="dark">

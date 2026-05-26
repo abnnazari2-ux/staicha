@@ -1,11 +1,11 @@
 "use client";
 
-import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useLayoutEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { motion, useScroll, useTransform, useReducedMotion } from "framer-motion";
-import { services } from "@/content/services";
+import type { Service } from "@/content/services";
 
-export default function ServicesShowcase() {
+export default function ServicesShowcase({ services }: { services: Service[] }) {
   const sectionRef = useRef<HTMLElement>(null);
   const trackRef = useRef<HTMLUListElement>(null);
   const [travel, setTravel] = useState(0);
