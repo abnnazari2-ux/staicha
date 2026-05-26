@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 600" width="600" height="600">
+  <defs>
+    
+  </defs>
+  <rect x="3" y="3" width="594" height="594" fill="none" stroke="#0F1417" stroke-width="3"></rect>
+  <text x="300" y="316" text-anchor="middle" class="mg" fill="#0F1417">ST</text>
+  <line x1="80" y1="382" x2="520" y2="382" stroke="#6F1F1F" stroke-width="2"></line>
+  <text x="300" y="490" text-anchor="middle" class="lbl" fill="#6F1F1F">EST. MMXXVI</text>
+</svg>

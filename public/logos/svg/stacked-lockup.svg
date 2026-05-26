@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 760" width="600" height="760">
+  <defs>
+    
+  </defs>
+  
+  <rect x="200" y="40" width="200" height="200" fill="none" stroke="#0F1417" stroke-width="2"></rect>
+  <text x="300" y="186" text-anchor="middle" class="mg" fill="#0F1417">ST</text>
+  
+  <text x="300" y="430" text-anchor="middle" class="wm" fill="#0F1417">Staicha</text>
+  <circle cx="528" cy="423" r="7" fill="#6F1F1F"></circle>
+  
+  <line x1="240" y1="490" x2="360" y2="490" stroke="#0F1417" stroke-width="1"></line>
+  <text x="300" y="540" text-anchor="middle" class="desc" fill="#0F1417">CHARTERED ACCOUNTANTS</text>
+</svg>

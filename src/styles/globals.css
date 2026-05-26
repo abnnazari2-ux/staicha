@@ -1,0 +1,131 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --ink: #0F1417;
+  --ink-2: #1B2125;
+  --bone: #EFEAE0;
+  --bone-2: #F5F1E8;
+  --paper: #FBF8F1;
+  --oxblood: #6F1F1F;
+  --oxblood-2: #8A2A24;
+  --oxblood-tint: #C68A78;
+  --graphite: #4A5258;
+  --pewter: #8C9197;
+  --silver: #C7C5BE;
+}
+
+* {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  box-sizing: border-box;
+}
+
+html, body {
+  background-color: var(--bone);
+  color: var(--ink);
+  font-family: var(--font-serif), serif;
+  font-feature-settings: "kern", "liga", "calt";
+  scroll-behavior: auto;
+}
+
+body {
+  overflow-x: hidden;
+}
+
+/* Tabular numerals for financial figures */
+.tabular {
+  font-feature-settings: "tnum", "lnum";
+  font-variant-numeric: tabular-nums lining-nums;
+}
+
+/* Focus state — oxblood outline */
+:focus-visible {
+  outline: 2px solid var(--oxblood);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* Selection */
+::selection {
+  background: var(--oxblood);
+  color: var(--bone);
+}
+
+/* Custom cursor visible only on fine pointers */
+@media (pointer: fine) {
+  body.has-custom-cursor,
+  body.has-custom-cursor * {
+    cursor: none !important;
+  }
+}
+
+/* Reduced motion safety */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Skip link */
+.skip-link {
+  position: absolute;
+  left: -9999px;
+  top: 0;
+  z-index: 100;
+  padding: 12px 20px;
+  background: var(--ink);
+  color: var(--bone);
+  font-family: var(--font-sans), sans-serif;
+  font-size: 14px;
+}
+.skip-link:focus {
+  left: 0;
+}
+
+/* Text mask reveal helpers */
+.line-mask {
+  display: block;
+  overflow: hidden;
+}
+.line-mask > * {
+  display: block;
+  transform: translateY(110%);
+  will-change: transform;
+}
+.line-mask.in > * {
+  transform: translateY(0);
+  transition: transform 800ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Underline link animation */
+.link-underline {
+  position: relative;
+  display: inline-block;
+}
+.link-underline::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -2px;
+  width: 100%;
+  height: 1px;
+  background: var(--oxblood);
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 250ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+.link-underline:hover::after,
+.link-underline:focus-visible::after {
+  transform: scaleX(1);
+}
+
+/* Hide scrollbar for horizontal panels */
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
