@@ -26,11 +26,14 @@ export default function AdminSidebar() {
               href="/admin"
               aria-current={pathname === "/admin" ? "page" : undefined}
               className={[
-                "block font-sans text-[14px] py-s2 transition-colors",
+                "flex items-center gap-s2 font-sans text-[14px] py-s2 transition-colors",
                 pathname === "/admin" ? "text-oxblood-tint" : "text-bone/80 hover:text-oxblood-tint",
               ].join(" ")}
             >
-              Dashboard
+              {pathname === "/admin" && (
+                <span aria-hidden className="inline-block w-[5px] h-[5px] rounded-full bg-oxblood-tint" />
+              )}
+              <span>Dashboard</span>
             </Link>
           </li>
           {sections.map((s) => {

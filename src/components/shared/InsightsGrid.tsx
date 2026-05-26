@@ -1,8 +1,9 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import type { Insight } from "@/content/insights";
 
@@ -11,9 +12,32 @@ type Category = (typeof categories)[number];
 
 const offsets = ["md:mt-0", "md:mt-s8", "md:mt-s5"];
 
+function isCategory(v: string | null): v is Category {
+  return !!v && (categories as readonly string[]).includes(v);
+}
+
 export default function InsightsGrid({ posts }: { posts: Insight[] }) {
-  const [active, setActive] = useState<Category>("All");
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const initial: Category = isCategory(searchParams.get("category")) ? (searchParams.get("category") as Category) : "All";
+  const [active, setActive] = useState<Category>(initial);
   const reduce = useReducedMotion();
+
+  // Browser navigation (back/forward) should re-apply the filter from the URL.
+  useEffect(() => {
+    const next = searchParams.get("category");
+    setActive(isCategory(next) ? next : "All");
+  }, [searchParams]);
+
+  function selectCategory(c: Category) {
+    setActive(c);
+    const params = new URLSearchParams(Array.from(searchParams.entries()));
+    if (c === "All") params.delete("category");
+    else params.set("category", c);
+    const q = params.toString();
+    router.replace(q ? `${pathname}?${q}` : pathname, { scroll: false });
+  }
 
   const filtered = useMemo(() => {
     if (active === "All") return posts;
@@ -27,7 +51,7 @@ export default function InsightsGrid({ posts }: { posts: Insight[] }) {
   return (
     <>
       <div
-        className="flex flex-wrap gap-s3 mb-s8 font-mono text-[10px] tracking-mono-up uppercase"
+        className="flex flex-wrap gap-s3 mb-s4 font-mono text-[10px] tracking-mono-up uppercase"
         role="toolbar"
         aria-label="Filter insights by category"
       >
@@ -38,7 +62,7 @@ export default function InsightsGrid({ posts }: { posts: Insight[] }) {
               key={c}
               type="button"
               aria-pressed={isActive}
-              onClick={() => setActive(c)}
+              onClick={() => selectCategory(c)}
               className={[
                 "min-h-[40px] inline-flex items-center px-s4 border transition-colors",
                 isActive
@@ -52,11 +76,14 @@ export default function InsightsGrid({ posts }: { posts: Insight[] }) {
         })}
       </div>
 
-      <div
-        className="grid grid-cols-1 md:grid-cols-3 gap-s7 min-h-[40vh]"
-        aria-live="polite"
-        aria-atomic="false"
-      >
+      {/* Live region: announce the result count when filter changes. */}
+      <p className="sr-only" role="status" aria-live="polite">
+        {filtered.length === 0
+          ? `No articles in ${active}.`
+          : `${filtered.length} article${filtered.length === 1 ? "" : "s"}${active === "All" ? "" : ` in ${active}`}.`}
+      </p>
+
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-s7 min-h-[40vh] mt-s5">
         <AnimatePresence mode="popLayout">
           {filtered.map((post, i) => (
             <motion.div

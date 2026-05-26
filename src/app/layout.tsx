@@ -10,6 +10,20 @@ import PageLoadSequence from "@/components/layout/PageLoadSequence";
 import { site } from "@/content/site";
 import { JsonLd, organizationLd } from "@/lib/jsonLd";
 import { readCollection } from "@/lib/cms";
+import { promises as fs } from "node:fs";
+import path from "node:path";
+
+// Read the OG image hash written by scripts/generate-og.mjs so the meta tag
+// references a cache-busted URL. Falls back to a fixed value if absent.
+async function ogVersion(): Promise<string> {
+  try {
+    return (
+      await fs.readFile(path.join(process.cwd(), "public", "og-image-version.txt"), "utf8")
+    ).trim();
+  } catch {
+    return "1";
+  }
+}
 
 const serif = Source_Serif_4({
   subsets: ["latin"],
@@ -39,46 +53,50 @@ export const viewport: Viewport = {
   themeColor: "#0F1417",
 };
 
-export const metadata: Metadata = {
-  metadataBase: new URL(site.url),
-  title: {
-    default: `${site.name} — Chartered Accountants & Advisors`,
-    template: `%s | ${site.name} — Chartered Accountants & Advisors`,
-  },
-  description: `${site.legalName}. ${site.description} ${site.tagline}`,
-  keywords: [
-    "chartered accountants London",
-    "audit",
-    "tax advisory",
-    "fractional CFO",
-    "R&D tax credits",
-    "corporate finance",
-    "Staicha",
-  ],
-  openGraph: {
-    type: "website",
-    siteName: site.name,
-    title: `${site.name} — Chartered Accountants & Advisors`,
-    description: `${site.tagline} ${site.description}`,
-    url: site.url,
-    images: [{ url: "/og-image.png", width: 1200, height: 630, alt: site.name }],
-    locale: "en_GB",
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: `${site.name} — Chartered Accountants & Advisors`,
-    description: site.tagline,
-    images: ["/og-image.png"],
-  },
-  icons: {
-    icon: [
-      { url: "/favicon.svg", type: "image/svg+xml" },
-      { url: "/favicon-32.png", sizes: "32x32", type: "image/png" },
+export async function generateMetadata(): Promise<Metadata> {
+  const v = await ogVersion();
+  const og = `/og-image.png?v=${v}`;
+  return {
+    metadataBase: new URL(site.url),
+    title: {
+      default: `${site.name} — Chartered Accountants & Advisors`,
+      template: `%s | ${site.name} — Chartered Accountants & Advisors`,
+    },
+    description: `${site.legalName}. ${site.description} ${site.tagline}`,
+    keywords: [
+      "chartered accountants London",
+      "audit",
+      "tax advisory",
+      "fractional CFO",
+      "R&D tax credits",
+      "corporate finance",
+      "Staicha",
     ],
-  },
-  robots: { index: true, follow: true },
-  alternates: { canonical: "/" },
-};
+    openGraph: {
+      type: "website",
+      siteName: site.name,
+      title: `${site.name} — Chartered Accountants & Advisors`,
+      description: `${site.tagline} ${site.description}`,
+      url: site.url,
+      images: [{ url: og, width: 1200, height: 630, alt: site.name }],
+      locale: "en_GB",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `${site.name} — Chartered Accountants & Advisors`,
+      description: site.tagline,
+      images: [og],
+    },
+    icons: {
+      icon: [
+        { url: "/favicon.svg", type: "image/svg+xml" },
+        { url: "/favicon-32.png", sizes: "32x32", type: "image/png" },
+      ],
+    },
+    robots: { index: true, follow: true },
+    alternates: { canonical: "/" },
+  };
+}
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const services = await readCollection("services");

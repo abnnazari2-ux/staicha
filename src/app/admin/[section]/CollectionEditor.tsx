@@ -13,7 +13,7 @@ type Props = {
 type Status =
   | { kind: "idle" }
   | { kind: "saving" }
-  | { kind: "saved"; persisted: boolean }
+  | { kind: "saved"; revalidated: string[] }
   | { kind: "error"; message: string };
 
 export default function CollectionEditor({ collection, title, file, initialData }: Props) {
@@ -53,7 +53,7 @@ export default function CollectionEditor({ collection, title, file, initialData 
       });
       const body = await res.json();
       if (res.ok && body.persisted) {
-        setStatus({ kind: "saved", persisted: true });
+        setStatus({ kind: "saved", revalidated: body.revalidated ?? [] });
       } else {
         setStatus({
           kind: "error",
@@ -100,8 +100,13 @@ export default function CollectionEditor({ collection, title, file, initialData 
       />
 
       <div className="mt-s4 min-h-[40px]">
-        {status.kind === "saved" && status.persisted && (
-          <p role="status" className="font-sans text-[13px] text-verdant">Saved. Override is now live.</p>
+        {status.kind === "saved" && (
+          <p role="status" className="font-sans text-[13px] text-verdant">
+            Saved
+            {status.revalidated.length > 0
+              ? ` — revalidated ${status.revalidated.length} route${status.revalidated.length === 1 ? "" : "s"}. Refresh the live site to confirm.`
+              : ". Refresh the live site to confirm."}
+          </p>
         )}
         {status.kind === "error" && (
           <p role="alert" className="font-sans text-[13px] text-oxblood-tint">

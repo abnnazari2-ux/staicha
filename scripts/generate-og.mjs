@@ -74,7 +74,11 @@ const ogSvg = `
 
 const png = await sharp(Buffer.from(ogSvg)).png().toBuffer();
 writeFileSync(join(outDir, "og-image.png"), png);
-console.log("og-image.png written");
+// Hash-based version pin so we can bust LinkedIn / Slack / etc. caches.
+const { createHash } = await import("node:crypto");
+const ogHash = createHash("sha256").update(png).digest("hex").slice(0, 8);
+writeFileSync(join(outDir, "og-image-version.txt"), ogHash);
+console.log(`og-image.png written (version ${ogHash})`);
 
 const faviconSvg = `
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">

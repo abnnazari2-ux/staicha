@@ -3,19 +3,11 @@
 import { useEffect, useRef, useState } from "react";
 import { motion, useScroll, useTransform, useReducedMotion, MotionValue } from "framer-motion";
 import type { Testimonial } from "@/content/testimonials";
+import { useMediaQuery } from "@/hooks/useMediaQuery";
 
 export default function TestimonialsSection({ testimonials }: { testimonials: Testimonial[] }) {
-  const [isMobile, setIsMobile] = useState(false);
+  const isMobile = useMediaQuery("(max-width: 767px)");
   const reduce = useReducedMotion();
-
-  useEffect(() => {
-    const mq = window.matchMedia("(max-width: 767px)");
-    const update = () => setIsMobile(mq.matches);
-    update();
-    mq.addEventListener("change", update);
-    return () => mq.removeEventListener("change", update);
-  }, []);
-
   if (isMobile || reduce) return <MobileCarousel testimonials={testimonials} />;
   return <DesktopStack testimonials={testimonials} />;
 }
@@ -41,11 +33,28 @@ function MobileCarousel({ testimonials }: { testimonials: Testimonial[] }) {
   const scrollTo = (i: number) => {
     const t = trackRef.current;
     if (!t) return;
-    const card = t.children[i] as HTMLElement | undefined;
+    const idx = Math.max(0, Math.min(testimonials.length - 1, i));
+    const card = t.children[idx] as HTMLElement | undefined;
     if (!card) return;
     // Measure actual horizontal padding rather than hard-coding an offset.
     const padding = parseFloat(getComputedStyle(t).paddingLeft) || 0;
     t.scrollTo({ left: card.offsetLeft - padding, behavior: "smooth" });
+  };
+
+  const onKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+    if (e.key === "ArrowRight") {
+      e.preventDefault();
+      scrollTo(active + 1);
+    } else if (e.key === "ArrowLeft") {
+      e.preventDefault();
+      scrollTo(active - 1);
+    } else if (e.key === "Home") {
+      e.preventDefault();
+      scrollTo(0);
+    } else if (e.key === "End") {
+      e.preventDefault();
+      scrollTo(testimonials.length - 1);
+    }
   };
 
   useEffect(() => {
@@ -83,7 +92,10 @@ function MobileCarousel({ testimonials }: { testimonials: Testimonial[] }) {
         <Header />
         <div
           ref={trackRef}
-          className="flex gap-s5 overflow-x-auto snap-x snap-mandatory no-scrollbar -mx-s5 px-s5 pb-s5"
+          tabIndex={0}
+          onKeyDown={onKeyDown}
+          aria-label={`Use Left and Right arrows to navigate ${testimonials.length} testimonials`}
+          className="flex gap-s5 overflow-x-auto snap-x snap-mandatory no-scrollbar -mx-s5 px-s5 pb-s5 focus:outline-none focus-visible:ring-2 focus-visible:ring-oxblood focus-visible:ring-offset-2"
         >
           {testimonials.map((t, i) => (
             <article

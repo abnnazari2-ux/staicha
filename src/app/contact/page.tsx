@@ -1,8 +1,10 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import SectionReveal from "@/components/ui/SectionReveal";
 import ContactForm from "@/components/shared/ContactForm";
 import { site } from "@/content/site";
 import { JsonLd, breadcrumbsLd } from "@/lib/jsonLd";
+
+export const viewport: Viewport = { themeColor: "#EFEAE0" };
 
 export const metadata: Metadata = {
   title: "Contact",

@@ -78,7 +78,7 @@ export default function AboutPage() {
             </SectionReveal>
             <SectionReveal delay={0.1}>
               <p>
-                The firm sits in London EC2, a short walk from the Bank of England and the City's principal regulatory and financial institutions. The location is not incidental. It reflects the work — engagements with companies whose figures will be read by boards, auditors, regulators, and counterparties.
+                The firm sits in London EC2, a short walk from the Bank of England and the City&rsquo;s principal regulatory and financial institutions. The location is not incidental. It reflects the work — engagements with companies whose figures will be read by boards, auditors, regulators, and counterparties.
               </p>
             </SectionReveal>
             <SectionReveal delay={0.2}>

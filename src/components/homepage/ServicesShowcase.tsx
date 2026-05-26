@@ -4,22 +4,21 @@ import { useLayoutEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { motion, useScroll, useTransform, useReducedMotion } from "framer-motion";
 import type { Service } from "@/content/services";
+import { useMediaQuery } from "@/hooks/useMediaQuery";
 
 export default function ServicesShowcase({ services }: { services: Service[] }) {
   const sectionRef = useRef<HTMLElement>(null);
   const trackRef = useRef<HTMLUListElement>(null);
   const [travel, setTravel] = useState(0);
-  const [isMobile, setIsMobile] = useState(false);
+  const isMobile = useMediaQuery("(max-width: 767px)");
   const reduce = useReducedMotion();
 
   // Measure how far the track must travel so the last card aligns with the
-  // viewport's left edge. Updates on resize.
+  // viewport's left edge. Updates on resize / when isMobile flips.
   useLayoutEffect(() => {
     if (typeof window === "undefined") return;
     const measure = () => {
-      const mobile = window.matchMedia("(max-width: 767px)").matches;
-      setIsMobile(mobile);
-      if (mobile || !trackRef.current || !sectionRef.current) {
+      if (isMobile || !trackRef.current || !sectionRef.current) {
         setTravel(0);
         return;
       }
@@ -30,7 +29,7 @@ export default function ServicesShowcase({ services }: { services: Service[] }) 
     measure();
     window.addEventListener("resize", measure);
     return () => window.removeEventListener("resize", measure);
-  }, []);
+  }, [isMobile]);
 
   const { scrollYProgress } = useScroll({
     target: sectionRef,
