@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import SectionReveal from "@/components/ui/SectionReveal";
 import ContactForm from "@/components/shared/ContactForm";
+import { site } from "@/content/site";
+import { JsonLd, breadcrumbsLd } from "@/lib/jsonLd";
 
 export const metadata: Metadata = {
   title: "Contact",
@@ -31,22 +33,22 @@ export default function ContactPage() {
           <div>
             <p className="font-mono text-[11px] tracking-mono-up uppercase text-oxblood mb-s4">Office</p>
             <address className="not-italic font-serif text-[18px] leading-[1.6] text-ink-2">
-              14 Throgmorton Avenue<br />London EC2N 2DL<br />United Kingdom
+              {site.address.street}<br />{site.address.locality} {site.address.postcode}<br />{site.address.country}
             </address>
           </div>
           <div>
             <p className="font-mono text-[11px] tracking-mono-up uppercase text-oxblood mb-s4">Direct</p>
             <p className="font-serif text-[18px] text-ink-2">
-              <a href="tel:+442079460118" className="link-underline">+44 20 7946 0118</a>
+              <a href={site.contact.phoneHref} className="link-underline">{site.contact.phone}</a>
             </p>
             <p className="font-serif text-[18px] text-ink-2 mt-s2">
-              <a href="mailto:contact@staicha.com" className="link-underline">contact@staicha.com</a>
+              <a href={`mailto:${site.contact.email}`} className="link-underline">{site.contact.email}</a>
             </p>
           </div>
           <div>
             <p className="font-mono text-[11px] tracking-mono-up uppercase text-oxblood mb-s4">Office hours</p>
             <p className="font-serif text-[16px] leading-[1.6] text-ink-2">
-              Monday – Friday<br />08:30 – 18:00 GMT
+              {site.hours}
             </p>
           </div>
           <div className="aspect-[4/3] bg-ink relative overflow-hidden">
@@ -59,12 +61,18 @@ export default function ContactPage() {
             <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-s5">
               <span className="block w-[14px] h-[14px] rounded-full bg-oxblood mb-s4" />
               <p className="font-mono text-[10px] tracking-mono-up uppercase text-silver">
-                14 Throgmorton Avenue · London EC2N 2DL
+                {site.address.street} · {site.address.locality} {site.address.postcode}
               </p>
             </div>
           </div>
         </SectionReveal>
       </div>
+      <JsonLd
+        data={breadcrumbsLd([
+          { name: "Home", url: "/" },
+          { name: "Contact", url: "/contact" },
+        ])}
+      />
     </section>
   );
 }

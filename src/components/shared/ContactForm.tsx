@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { site } from "@/content/site";
 
 type Status = "idle" | "submitting" | "success" | "error";
 
@@ -84,7 +85,7 @@ export default function ContactForm() {
         )}
         {status === "error" && (
           <p className="font-sans text-[13px] text-garnet" role="alert">
-            {error ?? "Something went wrong. Please email contact@staicha.com."}
+            {error ? `${error} Please email ${site.contact.email}.` : `Something went wrong. Please email ${site.contact.email}.`}
           </p>
         )}
       </div>

@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Source_Serif_4, Hanken_Grotesk, JetBrains_Mono } from "next/font/google";
 import "@/styles/globals.css";
 import Navigation from "@/components/layout/Navigation";
@@ -6,6 +6,9 @@ import Footer from "@/components/layout/Footer";
 import SmoothScroll from "@/components/layout/SmoothScroll";
 import CustomCursor from "@/components/ui/CustomCursor";
 import PageTransition from "@/components/layout/PageTransition";
+import PageLoadSequence from "@/components/layout/PageLoadSequence";
+import { site } from "@/content/site";
+import { JsonLd, organizationLd } from "@/lib/jsonLd";
 
 const serif = Source_Serif_4({
   subsets: ["latin"],
@@ -29,16 +32,19 @@ const mono = JetBrains_Mono({
   variable: "--font-mono",
 });
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://staicha.co.uk";
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  themeColor: "#0F1417",
+};
 
 export const metadata: Metadata = {
-  metadataBase: new URL(siteUrl),
+  metadataBase: new URL(site.url),
   title: {
-    default: "Staicha — Chartered Accountants & Advisors",
-    template: "%s | Staicha — Chartered Accountants & Advisors",
+    default: `${site.name} — Chartered Accountants & Advisors`,
+    template: `%s | ${site.name} — Chartered Accountants & Advisors`,
   },
-  description:
-    "Staicha LLP. A London chartered accountancy and advisory firm where Big Four rigour meets boutique responsiveness. Numbers, with conviction.",
+  description: `${site.legalName}. ${site.description} ${site.tagline}`,
   keywords: [
     "chartered accountants London",
     "audit",
@@ -50,17 +56,17 @@ export const metadata: Metadata = {
   ],
   openGraph: {
     type: "website",
-    siteName: "Staicha",
-    title: "Staicha — Chartered Accountants & Advisors",
-    description: "Numbers, with conviction. A London chartered accountancy and advisory firm.",
-    url: siteUrl,
-    images: [{ url: "/og-image.png", width: 1200, height: 630, alt: "Staicha" }],
+    siteName: site.name,
+    title: `${site.name} — Chartered Accountants & Advisors`,
+    description: `${site.tagline} ${site.description}`,
+    url: site.url,
+    images: [{ url: "/og-image.png", width: 1200, height: 630, alt: site.name }],
     locale: "en_GB",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Staicha — Chartered Accountants & Advisors",
-    description: "Numbers, with conviction.",
+    title: `${site.name} — Chartered Accountants & Advisors`,
+    description: site.tagline,
     images: ["/og-image.png"],
   },
   icons: {
@@ -80,35 +86,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <a href="#main" className="skip-link">Skip to content</a>
         <SmoothScroll />
         <CustomCursor />
+        <PageLoadSequence />
         <Navigation />
         <PageTransition>
           <main id="main" className="min-h-screen">{children}</main>
         </PageTransition>
         <Footer />
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify({
-              "@context": "https://schema.org",
-              "@type": "AccountingService",
-              name: "Staicha LLP",
-              url: siteUrl,
-              email: "contact@staicha.com",
-              telephone: "+44 20 7946 0118",
-              description:
-                "London chartered accountancy and advisory firm. Audit, tax, corporate finance, and fractional CFO services.",
-              address: {
-                "@type": "PostalAddress",
-                streetAddress: "14 Throgmorton Avenue",
-                addressLocality: "London",
-                postalCode: "EC2N 2DL",
-                addressCountry: "GB",
-              },
-              areaServed: "GB",
-              priceRange: "£££",
-            }),
-          }}
-        />
+        <JsonLd data={organizationLd} />
       </body>
     </html>
   );

@@ -9,9 +9,9 @@ The production website for Staicha LLP — a London chartered accountancy and ad
 - **Framework** — Next.js 14 (App Router) + TypeScript
 - **Styling** — Tailwind CSS with brand tokens (Ink, Bone, Oxblood)
 - **Type** — Source Serif 4, Hanken Grotesk, JetBrains Mono (via `next/font/google`)
-- **Animation** — Framer Motion (scroll/page motion), Lenis (smooth scroll), GSAP available for future scroll-trigger work
+- **Animation** — Framer Motion (scroll/page motion), Lenis (smooth scroll)
 - **Content** — File-based, in `src/content/*.ts`. Strongly typed.
-- **Admin** — `/admin` (basic-auth protected via middleware). Provides a read view of all content and points to the source files.
+- **Admin** — `/admin` (basic-auth protected via middleware). Edit any collection as JSON; saves are persisted to `content-overrides/<collection>.json` on hosts with a writable filesystem (Replit Reserved VM, Render, any VM). Overrides take precedence over the typed defaults at runtime. On read-only/serverless hosts the editor falls back to source-file editing.
 
 ## Pages
 
@@ -69,8 +69,20 @@ All content lives in `src/content/`:
 - `testimonials.ts` — client quotes
 - `insights.ts` — thought-leadership articles
 - `careers.ts` — open positions
+- `site.ts` — site-wide settings (contact, address, hours)
 
-Edit, commit, and redeploy. Each file is typed; the editor will warn on missing fields.
+Two ways to edit:
+
+1. **For permanent changes**: edit the typed source file, commit, and redeploy. The TypeScript compiler enforces the schema.
+2. **For ad-hoc changes from the browser**: log into `/admin`, open a collection, edit as JSON, click Save. Changes write to `content-overrides/<collection>.json` and override the source at runtime. This requires a writable filesystem (Replit Reserved VM works; pure serverless does not).
+
+## Generating brand assets
+
+Re-render the OG image and favicon after a brand change:
+
+```bash
+npm run gen:og
+```
 
 ## Brand assets
 
@@ -82,3 +94,12 @@ or transforms (except `scale`) to the wordmark. Never omit the precision dot.
 - WCAG 2.1 AA target across all pages
 - Custom-cursor and magnetic effects respect `prefers-reduced-motion` and touch
 - Skip link, semantic landmarks, focus-visible styles throughout
+- Mobile menu closes on Escape, traps focus while open
+- Horizontal scroll sections fall back to vertical stacks on mobile
+
+## SEO
+
+- Per-page metadata (title template, description, canonical URLs)
+- Open Graph + Twitter Card metadata; OG image at `/og-image.png`
+- JSON-LD structured data: `AccountingService`, `Service`, `Person`, `Article`, `BreadcrumbList`
+- `sitemap.xml` auto-generated, `robots.txt` served from `app/robots.ts`

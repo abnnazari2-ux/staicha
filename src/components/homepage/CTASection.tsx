@@ -1,10 +1,11 @@
 import Image from "next/image";
 import MagneticButton from "@/components/ui/MagneticButton";
 import SectionReveal from "@/components/ui/SectionReveal";
+import { site } from "@/content/site";
 
 export default function CTASection() {
   return (
-    <section className="bg-ink text-bone py-s10 relative overflow-hidden">
+    <section className="bg-ink text-bone py-s10 relative overflow-hidden" data-theme="dark">
       <div className="max-w-content mx-auto px-s5 md:px-s7">
         <SectionReveal>
           <p className="font-mono text-[11px] tracking-mono-up uppercase text-silver mb-s5">
@@ -28,9 +29,9 @@ export default function CTASection() {
 
           <SectionReveal delay={0.3}>
             <address className="not-italic font-sans text-[15px] text-bone space-y-s2">
-              <p><a href="mailto:contact@staicha.com" className="link-underline">contact@staicha.com</a></p>
-              <p><a href="tel:+442079460118" className="link-underline">+44 20 7946 0118</a></p>
-              <p className="text-silver">14 Throgmorton Avenue<br />London EC2N 2DL</p>
+              <p><a href={`mailto:${site.contact.email}`} className="link-underline">{site.contact.email}</a></p>
+              <p><a href={site.contact.phoneHref} className="link-underline">{site.contact.phone}</a></p>
+              <p className="text-silver">{site.address.street}<br />{site.address.locality} {site.address.postcode}</p>
             </address>
           </SectionReveal>
         </div>
@@ -47,11 +48,11 @@ export default function CTASection() {
         <SectionReveal delay={0.6}>
           <div className="mt-s10 flex flex-col items-center gap-s4 pt-s9 border-t border-bone/10">
             <Image
-              src="/logos/svg/horizontal-descriptor.svg"
+              src="/logos/svg/horizontal-descriptor-reversed.svg"
               alt="Staicha — Chartered Accountants · Advisors · London"
               width={480}
-              height={42}
-              className="h-10 w-auto invert opacity-90"
+              height={96}
+              className="h-14 w-auto"
             />
           </div>
         </SectionReveal>

@@ -24,7 +24,9 @@ export default function CustomCursor() {
     };
     const over = (e: MouseEvent) => {
       const t = e.target as HTMLElement;
-      const interactive = t.closest("a, button, [role=button], input, textarea, select, label");
+      const interactive = t.closest(
+        "a, button, [role=button], [role=link], [role=tab], input, textarea, select, label, summary, [data-cursor=hover]"
+      );
       el.classList.toggle("is-hover", !!interactive);
     };
 

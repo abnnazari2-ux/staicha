@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import SectionReveal from "@/components/ui/SectionReveal";
 import AnimatedText from "@/components/ui/AnimatedText";
+import { JsonLd, breadcrumbsLd } from "@/lib/jsonLd";
 
 export const metadata: Metadata = {
   title: "About",
@@ -41,7 +42,7 @@ const values = [
 export default function AboutPage() {
   return (
     <>
-      <section className="bg-ink text-bone min-h-[80vh] flex items-end pt-s10 pb-s9 relative overflow-hidden">
+      <section className="bg-ink text-bone min-h-[80vh] flex items-end pt-s10 pb-s9 relative overflow-hidden" data-theme="dark">
         <div className="absolute inset-0 opacity-25">
           <Image
             src="https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=1800&q=80"
@@ -146,6 +147,13 @@ export default function AboutPage() {
           </ul>
         </div>
       </section>
+
+      <JsonLd
+        data={breadcrumbsLd([
+          { name: "Home", url: "/" },
+          { name: "About", url: "/about" },
+        ])}
+      />
     </>
   );
 }

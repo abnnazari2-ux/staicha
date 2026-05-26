@@ -1,11 +1,7 @@
 <?xml version="1.0"?>
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 280" width="1400" height="280">
-  <defs>
-    
-  </defs>
-  <text x="40" y="180" class="wm" fill="#0F1417">Staicha</text>
-  <circle cx="868" cy="170" r="14" fill="#6F1F1F"></circle>
-  
-  <line x1="40" y1="220" x2="900" y2="220" stroke="#0F1417" stroke-width="1.5"></line>
-  <text x="40" y="262" class="desc" fill="#4A5258">CHARTERED ACCOUNTANTS · ADVISORS · LONDON</text>
+  <text x="40" y="180" font-family="'Source Serif 4','Source Serif Pro','Times New Roman',Times,serif" font-weight="300" font-size="170" letter-spacing="-4" fill="#0F1417">Staicha</text>
+  <circle cx="868" cy="170" r="14" fill="#6F1F1F"/>
+  <line x1="40" y1="220" x2="900" y2="220" stroke="#0F1417" stroke-width="1.5"/>
+  <text x="40" y="262" font-family="'Hanken Grotesk','Helvetica Neue',Helvetica,Arial,sans-serif" font-weight="500" font-size="22" letter-spacing="4" fill="#4A5258">CHARTERED ACCOUNTANTS · ADVISORS · LONDON</text>
 </svg>

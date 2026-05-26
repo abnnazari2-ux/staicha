@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import SectionReveal from "@/components/ui/SectionReveal";
 import MagneticButton from "@/components/ui/MagneticButton";
 import { services } from "@/content/services";
+import { JsonLd, breadcrumbsLd, serviceLd } from "@/lib/jsonLd";
 
 export function generateStaticParams() {
   return services.map((s) => ({ slug: s.slug }));
@@ -28,7 +29,7 @@ export default function ServicePage({ params }: { params: { slug: string } }) {
 
   return (
     <>
-      <section className="bg-ink text-bone pt-s10 pb-s9 min-h-[60vh] flex items-end">
+      <section className="bg-ink text-bone pt-s10 pb-s9 min-h-[60vh] flex items-end" data-theme="dark">
         <div className="max-w-content mx-auto px-s5 md:px-s7 w-full">
           <Link href="/services" className="font-mono text-[10px] tracking-mono-up uppercase text-silver hover:text-oxblood-tint mb-s5 inline-block">
             ← All services
@@ -97,7 +98,7 @@ export default function ServicePage({ params }: { params: { slug: string } }) {
         </div>
       </section>
 
-      <section className="bg-ink text-bone py-s10">
+      <section className="bg-ink text-bone py-s10" data-theme="dark">
         <div className="max-w-content mx-auto px-s5 md:px-s7 flex flex-col md:flex-row items-start md:items-center justify-between gap-s7">
           <div>
             <h2 className="font-serif font-light text-[clamp(28px,3.5vw,44px)] leading-[1.15] text-bone max-w-[24ch]">
@@ -116,6 +117,17 @@ export default function ServicePage({ params }: { params: { slug: string } }) {
           </Link>
         </div>
       </section>
+
+      <JsonLd
+        data={[
+          breadcrumbsLd([
+            { name: "Home", url: "/" },
+            { name: "Services", url: "/services" },
+            { name: service.title, url: `/services/${service.slug}` },
+          ]),
+          serviceLd(service),
+        ]}
+      />
     </>
   );
 }

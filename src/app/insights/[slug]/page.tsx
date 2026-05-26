@@ -5,6 +5,7 @@ import { notFound } from "next/navigation";
 import SectionReveal from "@/components/ui/SectionReveal";
 import { insights } from "@/content/insights";
 import { team } from "@/content/team";
+import { JsonLd, articleLd, breadcrumbsLd } from "@/lib/jsonLd";
 
 export function generateStaticParams() {
   return insights.map((i) => ({ slug: i.slug }));
@@ -37,7 +38,7 @@ export default function InsightArticle({ params }: { params: { slug: string } })
   return (
     <>
       <article>
-        <header className="bg-ink text-bone pt-s10 pb-s9">
+        <header className="bg-ink text-bone pt-s10 pb-s9" data-theme="dark">
           <div className="max-w-3xl mx-auto px-s5 md:px-s7">
             <Link href="/insights" className="font-mono text-[10px] tracking-mono-up uppercase text-silver hover:text-oxblood-tint mb-s5 inline-block">
               ← Back to Insights
@@ -128,20 +129,15 @@ export default function InsightArticle({ params }: { params: { slug: string } })
         </section>
       </article>
 
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "Article",
-            headline: post.title,
-            datePublished: post.date,
-            author: { "@type": "Person", name: post.author },
-            publisher: { "@type": "Organization", name: "Staicha LLP" },
-            image: post.image,
-            articleSection: post.category,
-          }),
-        }}
+      <JsonLd
+        data={[
+          breadcrumbsLd([
+            { name: "Home", url: "/" },
+            { name: "Insights", url: "/insights" },
+            { name: post.title, url: `/insights/${post.slug}` },
+          ]),
+          articleLd(post),
+        ]}
       />
     </>
   );

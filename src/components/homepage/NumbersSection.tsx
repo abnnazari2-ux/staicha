@@ -12,7 +12,7 @@ const figures = [
 
 export default function NumbersSection() {
   return (
-    <section className="bg-ink text-bone py-s10">
+    <section className="bg-ink text-bone py-s10" data-theme="dark">
       <div className="max-w-content mx-auto px-s5 md:px-s7">
         <SectionReveal>
           <p className="font-mono text-[11px] tracking-mono-up uppercase text-silver mb-s5">

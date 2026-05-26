@@ -2,7 +2,7 @@ import Link from "next/link";
 
 export default function NotFound() {
   return (
-    <section className="bg-ink text-bone min-h-[80vh] flex items-center">
+    <section className="bg-ink text-bone min-h-[80vh] flex items-center" data-theme="dark">
       <div className="max-w-content mx-auto px-s5 md:px-s7">
         <p className="font-mono text-[11px] tracking-mono-up uppercase text-oxblood-tint mb-s5">
           Error 404

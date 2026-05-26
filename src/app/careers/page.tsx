@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import SectionReveal from "@/components/ui/SectionReveal";
 import MagneticButton from "@/components/ui/MagneticButton";
 import { positions } from "@/content/careers";
+import { site } from "@/content/site";
+import { JsonLd, breadcrumbsLd } from "@/lib/jsonLd";
 
 export const metadata: Metadata = {
   title: "Careers",
@@ -48,7 +50,7 @@ const whyBenefits = [
 export default function CareersPage() {
   return (
     <>
-      <section className="bg-ink text-bone pt-s10 pb-s9 min-h-[65vh] flex items-end">
+      <section className="bg-ink text-bone pt-s10 pb-s9 min-h-[65vh] flex items-end" data-theme="dark">
         <div className="max-w-content mx-auto px-s5 md:px-s7 w-full">
           <p className="font-mono text-[11px] tracking-mono-up uppercase text-silver mb-s5">
             <span className="inline-block w-[6px] h-[6px] rounded-full bg-oxblood-tint align-middle mr-s2" />
@@ -138,7 +140,7 @@ export default function CareersPage() {
                           ))}
                         </ul>
                         <a
-                          href={`mailto:contact@staicha.com?subject=Application — ${encodeURIComponent(p.title)}`}
+                          href={`mailto:${site.contact.email}?subject=Application — ${encodeURIComponent(p.title)}`}
                           className="inline-flex items-center gap-s3 px-s5 py-s3 bg-oxblood text-bone font-sans text-[12px] tracking-kicker uppercase hover:bg-oxblood-tint transition-colors"
                         >
                           Apply via email →
@@ -153,7 +155,7 @@ export default function CareersPage() {
         </div>
       </section>
 
-      <section className="bg-ink text-bone py-s10">
+      <section className="bg-ink text-bone py-s10" data-theme="dark">
         <div className="max-w-content mx-auto px-s5 md:px-s7">
           <p className="font-mono text-[11px] tracking-mono-up uppercase text-silver mb-s5">
             <span className="inline-block w-[6px] h-[6px] rounded-full bg-oxblood-tint align-middle mr-s2" />
@@ -170,13 +172,20 @@ export default function CareersPage() {
             ))}
           </div>
           <div className="mt-s9">
-            <MagneticButton href="mailto:contact@staicha.com?subject=Career enquiry" variant="filled">
+            <MagneticButton href={`mailto:${site.contact.email}?subject=Career enquiry`} variant="filled">
               Speak with the firm
               <span aria-hidden>→</span>
             </MagneticButton>
           </div>
         </div>
       </section>
+
+      <JsonLd
+        data={breadcrumbsLd([
+          { name: "Home", url: "/" },
+          { name: "Careers", url: "/careers" },
+        ])}
+      />
     </>
   );
 }

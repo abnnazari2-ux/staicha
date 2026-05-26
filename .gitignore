@@ -33,3 +33,8 @@ next-env.d.ts
 
 # vercel
 .vercel
+
+# Runtime CMS overrides — these are written by the admin UI on hosts with a
+# writable filesystem. The typed source files in src/content/ remain the
+# source of truth.
+content-overrides/

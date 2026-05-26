@@ -19,6 +19,7 @@ export default function HeroSection() {
       ref={ref}
       className="relative h-[100vh] flex flex-col items-center justify-center bg-ink text-bone overflow-hidden"
       aria-label="Staicha — Numbers, with conviction"
+      data-theme="dark"
     >
       <motion.div
         style={{ scale, opacity }}

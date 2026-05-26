@@ -1,7 +1,6 @@
 "use client";
 
-import { motion } from "framer-motion";
-import { useReducedMotion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 
 type Props = {
   children: string;
@@ -24,30 +23,50 @@ export default function AnimatedText({
   const Tag = as as React.ElementType;
 
   if (reduce) {
-    return <Tag className={className}>{children}</Tag>;
+    return (
+      <Tag className={className}>
+        {children.split("\n").map((line, i, arr) => (
+          <span key={i} className="block">
+            {line}
+            {i < arr.length - 1 ? null : null}
+          </span>
+        ))}
+      </Tag>
+    );
   }
 
-  const parts = by === "word" ? children.split(/(\s+)/) : children.split("\n");
+  const lines = children.split("\n");
 
   return (
     <Tag className={className}>
-      {parts.map((part, i) => {
-        if (/^\s+$/.test(part)) return <span key={i}>{part}</span>;
+      <span className="sr-only">{children}</span>
+      {lines.map((line, li) => {
+        const tokens =
+          by === "word" ? line.split(/(\s+)/) : [line];
+        let runningIndex = 0;
         return (
-          <span key={i} className="inline-block overflow-hidden align-bottom" aria-hidden={false}>
-            <motion.span
-              className="inline-block"
-              initial={{ y: "110%" }}
-              whileInView={{ y: "0%" }}
-              viewport={{ once: true, amount: 0.2 }}
-              transition={{
-                duration: 0.7,
-                ease: [0.22, 1, 0.36, 1],
-                delay: delay + i * stagger,
-              }}
-            >
-              {part}
-            </motion.span>
+          <span key={li} className="block" aria-hidden>
+            {tokens.map((part, i) => {
+              if (/^\s+$/.test(part)) return <span key={i}>{" "}</span>;
+              const orderIndex = runningIndex++;
+              return (
+                <span key={i} className="inline-block overflow-hidden align-bottom">
+                  <motion.span
+                    className="inline-block will-change-transform"
+                    initial={{ y: "110%" }}
+                    whileInView={{ y: "0%" }}
+                    viewport={{ once: true, amount: 0.2 }}
+                    transition={{
+                      duration: 0.7,
+                      ease: [0.22, 1, 0.36, 1],
+                      delay: delay + (li * 0.15) + orderIndex * stagger,
+                    }}
+                  >
+                    {part}
+                  </motion.span>
+                </span>
+              );
+            })}
           </span>
         );
       })}

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import SectionReveal from "@/components/ui/SectionReveal";
 import { services } from "@/content/services";
+import { JsonLd, breadcrumbsLd, serviceLd } from "@/lib/jsonLd";
 
 export const metadata: Metadata = {
   title: "Services",
@@ -13,7 +14,7 @@ export const metadata: Metadata = {
 export default function ServicesPage() {
   return (
     <>
-      <section className="bg-ink text-bone pt-s10 pb-s9 min-h-[60vh] flex items-end">
+      <section className="bg-ink text-bone pt-s10 pb-s9 min-h-[60vh] flex items-end" data-theme="dark">
         <div className="max-w-content mx-auto px-s5 md:px-s7 w-full">
           <p className="font-mono text-[11px] tracking-mono-up uppercase text-silver mb-s5">
             <span className="inline-block w-[6px] h-[6px] rounded-full bg-oxblood-tint align-middle mr-s2" />
@@ -55,6 +56,16 @@ export default function ServicesPage() {
           ))}
         </ul>
       </section>
+
+      <JsonLd
+        data={[
+          breadcrumbsLd([
+            { name: "Home", url: "/" },
+            { name: "Services", url: "/services" },
+          ]),
+          ...services.map((s) => serviceLd(s)),
+        ]}
+      />
     </>
   );
 }
